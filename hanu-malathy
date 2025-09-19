@@ -1,1 +1,52 @@
 
+#include <graphics.h>
+#include <conio.h>
+#include <stdio.h>
+#include <dos.h> // For delay()
+
+#define ScreenWidth getmaxx()
+#define ScreenHeight getmaxy()
+#define GroundY (ScreenHeight * 0.75) // Ground level
+
+// Function to draw the man at a given x-coordinate and leg displacement
+void DrawMan(int x, int ldisp) {
+    // Head
+    circle(x, GroundY - 90, 10);
+    // Body
+    line(x, GroundY - 80, x, GroundY - 30);
+    // Arms (simple representation)
+    line(x, GroundY - 70, x + 10, GroundY - 60);
+    line(x, GroundY - 65, x + 10, GroundY - 55);
+    // Legs (animated for running effect)
+    line(x, GroundY - 30, x + ldisp, GroundY);
+    line(x, GroundY - 30, x - ldisp, GroundY);
+}
+
+void main() {
+    int gd = DETECT, gm;
+    int x = 0; // Man's x-coordinate
+    int ldisp = 0; // Leg displacement for animation
+
+    initgraph(&gd, &gm, "C:\\TurboC3\\BGI"); // Adjust path to BGI folder
+
+    while (!kbhit()) { // Loop until a key is pressed
+        cleardevice(); // Clear the screen
+
+        // Draw the ground
+        line(0, GroundY, ScreenWidth, GroundY);
+
+        // Update leg displacement for running animation
+        ldisp = (ldisp + 2) % 20; // Cycles between 0 and 18
+
+        // Draw the man
+        DrawMan(x, ldisp);
+
+        delay(50); // Control animation speed
+
+        // Move the man across the screen
+        x = (x + 5) % ScreenWidth; // Move right, wrap around at screen edge
+    }
+
+    getch(); // Wait for a key press before closing
+    closegraph(); // Close graphics mode
+}
